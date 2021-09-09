@@ -1,0 +1,189 @@
+let sum = 0
+const recordsX = new Array()
+const recordsY = new Array()
+
+const chessBoardScaleX = parseInt(prompt('请输入有多少行'))
+const chessBoardScaleY = parseInt(prompt('请输入有多少列'))
+
+// const chessBoardScaleX = 5
+// const chessBoardScaleY = 5
+
+const record = new Array() // 棋盘
+const cover = new Array() // 马的位置
+
+let maxAttack = null // 最大攻击点 以及 x y 坐标
+let maxAttackX = null
+let maxAttackY = null
+
+for (let i = 0; i < chessBoardScaleX; i++) {
+    cover[i] = new Array()
+    for (let j = 0; j < chessBoardScaleY; j++) {
+        cover[i][j] = null
+    }
+}
+
+function getchance() {  // 遍历计算每个点被攻击的次数
+    for (let i = 0; i < chessBoardScaleX; i++) {
+        record[i] = new Array()
+        for (let j = 0; j < chessBoardScaleY; j++) {
+            record[i][j] = 0 // 赋予初始值0 若被攻击则加一
+            if (j - 2 >= 0 && i - 1 >= 0) { record[i][j]++; }
+            if (j - 1 >= 0 && i - 2 >= 0) { record[i][j]++; }
+            if (j - 2 >= 0 && i + 1 < chessBoardScaleX) { record[i][j]++; }
+            if (j - 1 >= 0 && i + 2 < chessBoardScaleX) { record[i][j]++; }
+            if (j + 2 < chessBoardScaleY && i - 1 >= 0) { record[i][j]++; }
+            if (j + 1 < chessBoardScaleY && i - 2 >= 0) { record[i][j]++; }
+            if (j + 2 < chessBoardScaleY && i + 1 < chessBoardScaleX) { record[i][j]++; }
+            if (j + 1 < chessBoardScaleY && i + 2 < chessBoardScaleX) { record[i][j]++; }
+            if (record[i][j] > maxAttack) {
+                maxAttack = record[i][j]
+                maxAttackX = i
+                maxAttackY = j
+            }
+        }
+    }
+
+}
+function getcover() { // 放马位置
+    cover[maxAttackX][maxAttackY] = '马'
+    record[maxAttackX][maxAttackY] = -1
+    recordsX.push(maxAttackX)
+    recordsY.push(maxAttackY)
+}
+// 对上一步置为-1的位置再次计算，求出它们能吃到的位置，并将这些位置上的记录数据 record[][] 做自减处理，
+// 对于record[][]为-1的位置不再做任何处理，若出现 record[][] 自减到0的情况，则在下次的计算中不再做自减处理
+function getAttack() { // 能被马攻击的位置置为-1
+    if (maxAttackX - 1 >= 0 && maxAttackY - 2 >= 0) {
+        record[maxAttackX - 1][maxAttackY - 2] = -1
+        getCut(maxAttackX - 1, maxAttackY - 2)
+    }
+    if (maxAttackX - 2 >= 0 && maxAttackY - 1 >= 0) {
+        record[maxAttackX - 2][maxAttackY - 1] = -1
+        getCut(maxAttackX - 2, maxAttackY - 1)
+    }
+    if (maxAttackX - 1 >= 0 && maxAttackY + 2 < chessBoardScaleY) {
+        record[maxAttackX - 1][maxAttackY + 2] = -1
+        getCut(maxAttackX - 1, maxAttackY + 2)
+    }
+    if (maxAttackX - 2 >= 0 && maxAttackY + 1 < chessBoardScaleY) {
+        record[maxAttackX - 2][maxAttackY + 1] = -1
+        getCut(maxAttackX - 2, maxAttackY + 1)
+    }
+    if (maxAttackX + 1 < chessBoardScaleX && maxAttackY - 2 >= 0) {
+        record[maxAttackX + 1][maxAttackY - 2] = -1
+        getCut(maxAttackX + 1, maxAttackY - 2)
+    }
+    if (maxAttackX + 2 < chessBoardScaleX && maxAttackY - 1 >= 0) {
+        record[maxAttackX + 2][maxAttackY - 1] = -1
+        getCut(maxAttackX + 2, maxAttackY - 1)
+    }
+    if (maxAttackX + 1 < chessBoardScaleX && maxAttackY + 2 < chessBoardScaleY) {
+        record[maxAttackX + 1][maxAttackY + 2] = -1
+        getCut(maxAttackX + 1, maxAttackY + 2)
+    }
+    if (maxAttackX + 2 < chessBoardScaleX && maxAttackY + 1 < chessBoardScaleY) {
+        record[maxAttackX + 2][maxAttackY + 1] = -1
+        getCut(maxAttackX + 2, maxAttackY + 1)
+    }
+
+}
+function getCut(i, j) {
+    if (j - 2 >= 0 && i - 1 >= 0 && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
+    if (j - 1 >= 0 && i - 2 >= 0 && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
+    if (j - 2 >= 0 && i + 1 < chessBoardScaleX && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
+    if (j - 1 >= 0 && i + 2 < chessBoardScaleX && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
+    if (j + 2 < chessBoardScaleY && i - 1 >= 0 && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
+    if (j + 1 < chessBoardScaleY && i - 2 >= 0 && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
+    if (j + 2 < chessBoardScaleY && i + 1 < chessBoardScaleX && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
+    if (j + 1 < chessBoardScaleY && i + 2 < chessBoardScaleX && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
+}
+function getMax() {
+    for (let i = 0; i < chessBoardScaleX; i++) {
+        for (let j = 0; j < chessBoardScaleY; j++) {
+            if (record[i][j] > maxAttack) {
+                maxAttack = record[i][j]
+                maxAttackX = i
+                maxAttackY = j
+            }
+        }
+    }
+}
+getchance()
+while (maxAttack >= 0) {
+
+    getcover()
+    getAttack()
+    maxAttack = -1
+    getMax()
+    // document.write(record + ' <br>')
+    // console.log(record)
+    // console.log(cover)
+    // console.log(maxAttack)
+
+    // console.log(recordsX)
+    sum++
+}
+// console.log(recordsY);
+const all = document.querySelector('#all')
+// const explain = document.querySelector('#explain')
+
+
+for (let i = 0; i < sum; i++) {
+    // let h4 = document.createElement('h4')
+    // explain.appendChild(h4)
+    // h4.innerHTML = '第' + (i + 1) + '次放马'
+    // h4.style.display = 'flex'
+    // h4.style.float = 'left'
+    // h4.style.width = '22%'
+    let div = document.createElement('div')
+    all.appendChild(div)
+    div.style.width = '22%'
+    div.style.height = '100%'
+    div.style.display = 'flex'
+    div.style.position = 'relative'
+    div.style.float = 'left'
+    div.style.flexWrap = 'wrap'
+    div.style.border = '1px solid #91c'
+    div.style.marginTop = '30px'
+    div.id = 'father' + i
+    for (let i = 0; i < chessBoardScaleX * chessBoardScaleY; i++) {
+        let div1 = document.createElement('div')
+        div.appendChild(div1)
+        let w = 100 / chessBoardScaleX - 1
+        let h = 100 / chessBoardScaleY - 1
+        div1.style.width = w + '%'
+        div1.style.height = h + '%'
+        div1.style.backgroundColor = 'skyblue'
+        div1.style.display = 'flex'
+        div1.style.float = 'left'
+        div1.style.textAlign = 'center'
+        div1.style.lineHeight = '50px'
+        div1.style.border = '1px solid #92c'
+    }
+    let h4 = document.createElement('h4')
+    div.appendChild(h4)
+    h4.innerHTML = '第' + (i + 1) + '次放马'
+    h4.style.position = 'absolute'
+    h4.style.top = '-50px'
+    if (i === (sum - 1)) {
+        h4.innerHTML = '最后一次放马'
+    }
+}
+for (i = 0; i < sum; i++) {
+    let n = 0
+    for (let m = 0; m <= i; m++) {
+        let jie = recordsX[m] + recordsY[n] * chessBoardScaleX
+        all.children[i].children[jie].style.backgroundColor = 'pink'
+        n++
+    }
+}
+
+
+
+
+
+
+
+
+
+

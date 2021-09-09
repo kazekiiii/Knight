@@ -24,6 +24,9 @@
 </head>
 
 <body>
+    <h1>马的极小满覆盖问题</h1>
+    <h3>以下为放马顺序</h3>
+    <!-- <div id="explain"></div> -->
     <div id="all"></div>
 
     <!-- <script src="./javascirpt.js">
@@ -35,6 +38,9 @@
 
         const chessBoardScaleX = parseInt(prompt('请输入有多少行'))
         const chessBoardScaleY = parseInt(prompt('请输入有多少列'))
+
+        // const chessBoardScaleX = 5
+        // const chessBoardScaleY = 5
 
         const record = new Array() // 棋盘
         const cover = new Array() // 马的位置
@@ -115,7 +121,7 @@
             }
 
         }
-        function getCut(i, j) {  // 对于每个点
+        function getCut(i, j) {
             if (j - 2 >= 0 && i - 1 >= 0 && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
             if (j - 1 >= 0 && i - 2 >= 0 && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
             if (j - 2 >= 0 && i + 1 < chessBoardScaleX && record[i][j] != -1 && record[i][j] != 0) { record[i][j]--; }
@@ -153,16 +159,20 @@
         }
         // console.log(recordsY);
         const all = document.querySelector('#all')
+        // const explain = document.querySelector('#explain')
+
 
         for (let i = 0; i < sum; i++) {
             let div = document.createElement('div')
             all.appendChild(div)
-            div.style.width = '24%'
+            div.style.width = '22%'
             div.style.height = '100%'
             div.style.display = 'flex'
+            div.style.position = 'relative'
             div.style.float = 'left'
             div.style.flexWrap = 'wrap'
             div.style.border = '1px solid #91c'
+            div.style.marginTop = '30px'
             div.id = 'father' + i
             for (let i = 0; i < chessBoardScaleX * chessBoardScaleY; i++) {
                 let div1 = document.createElement('div')
@@ -178,7 +188,14 @@
                 div1.style.lineHeight = '50px'
                 div1.style.border = '1px solid #92c'
             }
-
+            let h4 = document.createElement('h4')
+            div.appendChild(h4)
+            h4.innerHTML = '第' + (i + 1) + '次放马'
+            h4.style.position = 'absolute'
+            h4.style.top = '-50px'
+            if (i === (sum - 1)) {
+                h4.innerHTML = '最后一次放马'
+            }
         }
         for (i = 0; i < sum; i++) {
             let n = 0
